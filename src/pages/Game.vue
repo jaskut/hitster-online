@@ -1,11 +1,15 @@
 <template>
   <main>
-    <v-container v-if="songs">
-    <h1>GameView</h1>
-    <v-btn @click="previous">Previous</v-btn>
-    <v-btn @click="next">Next</v-btn>
-    <song-card v-if="current>=0" :song="songs[current]" ref="songCard"/>
-    </v-container>
+  <div v-if="songs">
+    <div class="d-flex justify-center">
+      <h1>GameView</h1>
+    </div>
+    <div class="d-flex justify-center align-center">
+      <v-btn icon="mdi-chevron-left" size="x-large" @click="previous"/>
+      <song-card v-if="current>=0" :song="songs[current]" ref="songCard"/>
+      <v-btn icon="mdi-chevron-right" size="x-large" @click="next"/>
+      </div>
+  </div>
   </main>
 </template>
 
@@ -28,6 +32,7 @@
     setTimeout(() => {
       current.value++
       play(authStore.token || '', songs.value[current.value].uri)
+      songCard.value.icon = true
     }, songCard.value.flipped? 0:500)
     songCard.value.flipped = true
   }
@@ -35,6 +40,7 @@
   function previous() {
     current.value--
     play(authStore.token || '', songs.value[current.value].uri)
+    songCard.value.icon = true
   }
 
 </script>

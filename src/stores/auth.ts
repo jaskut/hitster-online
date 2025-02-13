@@ -26,7 +26,7 @@ export const useAuthStore = defineStore('auth', {
     },
     login() {
       clearTimeout(this.refreshTokenTimeOut || undefined)
-      tokenAuth().then(result => {this.setToken(result)})
+      tokenAuth().then(result => {result?this.setToken(result):null})
     },
     refresh() {
       refreshToken(this.refresh_token || '').then(result => {this.setToken(result)})

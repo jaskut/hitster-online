@@ -1,8 +1,9 @@
 <template>
+  <div>
   <v-container height="300px" width="300px">
   <div @click="flipped=!flipped" class="flip-card" :class="flipped?'flip':''">
     <div class="flip-card-inner">
-      <div class="flip-card-front">
+      <div class="flip-card-front" :style="{'background-color':color}">
         <div style="height:100%; padding: 30px">
           <h3>{{ song.artists.map(artist => artist.name).join(', ') }}</h3>
           <h1 style="font-size: 4em;">{{ song.album.release_date.substring(0,4) }}</h1>
@@ -17,6 +18,7 @@
     </div>
   </div>
   </v-container>
+</div>
 </template>
 
 <script lang="ts" setup>
@@ -26,9 +28,8 @@
 
   const authStore = useAuthStore()
   const theme = useTheme()
-  console.log(theme.current.value.colors)
 
-  const { song, color="blue"} = defineProps<{
+  const { song, color="green"} = defineProps<{
     song: {name:string, artists:Array<{name:string}>, album:{release_date:string}},
     color?: string
   }>()
@@ -46,7 +47,7 @@
     })
   }
 
-  defineExpose({flipped})
+  defineExpose({flipped, icon})
 </script>
 
 <style>
@@ -63,6 +64,7 @@
     text-align: center;
     transition: transform 0.8s;
     transform-style: preserve-3d;
+    backface-visibility:hidden
   }
 
   .flip .flip-card-inner {
