@@ -1,16 +1,16 @@
 <template>
   <div>
   <v-container height="300px" width="300px">
-  <div @click="flipped=!flipped" class="flip-card" :class="flipped?'flip':''">
+  <div @click="flipped=!flipped" class="flip-card" :class="flipped?'':'flip'">
     <div class="flip-card-inner">
-      <div class="flip-card-front" :style="{'background-color':color}">
+      <div class="flip-card-back" :style="{'background-color':color}">
         <div style="height:100%; padding: 30px">
           <h3>{{ song.artists.map(artist => artist.name).join(', ') }}</h3>
           <h1 style="font-size: 4em;">{{ song.album.release_date.substring(0,4) }}</h1>
           <h3><i>{{ song.name }}</i></h3>
         </div>
       </div>
-      <div class="flip-card-back">
+      <div class="flip-card-front">
         <div style="height:100%; display: flex; justify-content: center; align-items: center">
           <v-icon @click="toggle" :icon="icon ? 'mdi-pause-circle-outline' : 'mdi-play-circle-outline'" size="150px"/>
         </div>
