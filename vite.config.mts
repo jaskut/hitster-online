@@ -69,7 +69,14 @@ export default defineConfig({
     ],
   },
   server: {
+    host: '0.0.0.0', // Allow external connections from any IP
     port: 3000,
+    // HTTPS disabled for easier remote access
+    // To re-enable HTTPS, uncomment below and ensure certificates exist
+    // https: {
+    //   key: fs.readFileSync('localhost-key.pem'),
+    //   cert: fs.readFileSync('localhost.pem'),
+    // },
   },
   css: {
     preprocessorOptions: {
