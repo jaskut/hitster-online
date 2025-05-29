@@ -15,23 +15,24 @@
 
 <script setup lang="ts">
   import SongCard from '@/components/SongCard.vue'
-  import { useAuthStore } from '@/stores/auth'
-  import { getPlaylist, play } from '@/spotify/calls';
-  //const href = "spotify:track:0QtJZpyfZF67QF32p41NXa"
+  import { getPlaylist, play } from '@/services/api'
 
-  const authStore = useAuthStore()
   const songs = ref()
   const current = ref(0)
-
   const songCard = ref()
 
-  getPlaylist(authStore.token || '', '58y9xPPIRWd8tqlOaKoDOI').then(result => songs.value = result.map((item:any) => item.track).sort(() => Math.random() - 0.5))
-  //window.open("https://open.spotify.com/track/0QtJZpyfZF67QF32p41NXa")
+  // Fetch playlist from our backend server (no auth needed on client)
+  getPlaylist('58y9xPPIRWd8tqlOaKoDOI').then(result => {
+    songs.value = result.items.map((item: any) => item.track).sort(() => Math.random() - 0.5)
+  }).catch(error => {
+    console.error('Failed to load playlist:', error)
+    // You might want to show an error message to the user
+  })
 
   function next() {
     setTimeout(() => {
       current.value++
-      play(authStore.token || '', songs.value[current.value].uri)
+      play(songs.value[current.value].uri)
       songCard.value.icon = true
     }, songCard.value.flipped? 0:500)
     songCard.value.flipped = true
@@ -39,7 +40,7 @@
 
   function previous() {
     current.value--
-    play(authStore.token || '', songs.value[current.value].uri)
+    play(songs.value[current.value].uri)
     songCard.value.icon = true
   }
 

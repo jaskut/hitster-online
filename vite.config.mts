@@ -73,10 +73,11 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Allow external connections from any IP
     port: 3000,
-    https: {
-      key: fs.readFileSync(path.resolve('localhost-key.pem')),
-      cert: fs.readFileSync(path.resolve('localhost.pem')),
-    },
+    // Temporarily disable HTTPS for testing connectivity
+    // https: {
+    //   key: fs.readFileSync(path.resolve('localhost-key.pem')),
+    //   cert: fs.readFileSync(path.resolve('localhost.pem')),
+    // },
   },
   css: {
     preprocessorOptions: {

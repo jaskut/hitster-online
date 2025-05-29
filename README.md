@@ -1,10 +1,21 @@
 # Hitster Online
 
-Online version of Hitster.
+Online version of Hitster - a music timeline guessing game.
+
+## Architecture
+
+This app uses a **client-server architecture** where:
+
+- **Server (Machine A)**: Handles Spotify authentication and music playback
+- **Client (Machine B)**: Web browser interface for game control
+
+This allows multiple users to join the game from different devices without needing their own Spotify accounts.
 
 ## Install
 
-Set up your project using your preferred package manager. Use the corresponding command to install the dependencies:
+### Frontend Setup
+
+Set up your project using your preferred package manager:
 
 | Package Manager                                               | Command        |
 |---------------------------------------------------------------|----------------|
@@ -13,36 +24,73 @@ Set up your project using your preferred package manager. Use the corresponding 
 | [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
 | [bun](https://bun.sh/#getting-started)                        | `bun install`  |
 
-Set up app in spotify (see [Getting started](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)). Set Redirect URI to where the app will run /login (example: https://localhost:3000/login)
+### Backend Setup
 
-Add a .env file and fill in variables (see .env.example)
+1. **Set up Spotify App** (see [Getting started](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)):
+   - Set Redirect URI to `http://localhost:3001/callback`
+   - Get Client ID and Client Secret
+
+2. **Configure Server Environment**:
+   Create `server/.env` file:
+   ```env
+   SPOTIFY_CLIENT_ID=your_client_id
+   SPOTIFY_CLIENT_SECRET=your_client_secret
+   SPOTIFY_REDIRECT_URI=http://localhost:3001/callback
+   PORT=3001
+   ```
+
+3. **Install and Start Server**:
+   ```bash
+   npm install
+   npm run server
+   ```
+
+4. **Authenticate Spotify**:
+   - Server will print authentication URL
+   - Visit URL and authorize your Spotify account
+   - Follow authentication steps in `server/README.md`
 
 ## Usage
 
-This section covers how to start the development server and build your project for production.
-
-### Starting the Development Server
-
-To start the development server with hot-reload, run the following command. The server will be accessible at [https://localhost:3000](https://localhost:3000)
+### Starting the Full Application
 
 ```bash
-yarn dev
+# Start both server and frontend
+npm run dev:full
+
+# Or start separately:
+npm run server    # Backend on port 3001
+npm run dev       # Frontend on port 3000
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+### Important Notes
 
+- **Server Machine (A)**: Must have Spotify app open and playing before starting game
+- **Client Machine (B)**: Just needs web browser access to `http://MACHINE_A_IP:3000`
+- **First Time**: Make sure to authenticate server with Spotify (see server/README.md)
 
-If the music doesn't start playing once the sound-card appears, make sure you have an open Spotify application (either in browser or as app) and try playing a random song there. Then click "next" on the right of the sound-card and hopefully a new song starts playing. (This is an issue with the Spotify API having to find a device to play the music on, so one must first make sure that there is a device (specifically an active device) running)
+### Troubleshooting Music Playback
 
+If music doesn't start playing:
+
+1. **On Server Machine**: Open Spotify app and play any song
+2. **Check Authentication**: Ensure server is authenticated with Spotify
+3. **Active Device**: Spotify needs an "active device" - play something in Spotify first
+4. **Server Logs**: Check server console for error messages
 
 ### Building for Production
 
-To build your project for production, use:
+To build your project for production:
 
 ```bash
-yarn build
+npm run build
 ```
 
-(Repeat for npm, pnpm, and bun with respective commands.)
+## Game Instructions
 
-Once the build process is completed, your application will be ready for deployment in a production environment.
+1. **Listen** to the song snippet
+2. **Guess** what year it was released
+3. **Click** the card to reveal the answer
+4. **Navigate** with left/right arrows to next/previous songs
+
+The goal is to build a mental timeline of music history!

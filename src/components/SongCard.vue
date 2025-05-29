@@ -22,12 +22,8 @@
 </template>
 
 <script lang="ts" setup>
-  import { useAuthStore } from '@/stores/auth'
-  import { play, pause, getPlaybackState } from '@/spotify/calls'
-  import { useTheme } from 'vuetify'
-
-  const authStore = useAuthStore()
-  const theme = useTheme()
+  import { play, pause, getPlaybackState, onWebSocketMessage, sendToServer } from '@/services/api'
+  import { getSpotifyPlayer } from '@/services/spotify-client'
 
   const { song, color="green"} = defineProps<{
     song: {name:string, artists:Array<{name:string}>, album:{release_date:string}},
@@ -35,15 +31,63 @@
   }>()
 
   const icon=ref(true)
-  getPlaybackState(authStore.token || '').then(result => icon.value = result) 
-
   const flipped = ref(true)
+  const spotifyPlayer = getSpotifyPlayer()
+
+  // Get initial playback state from server
+  getPlaybackState().then(result => icon.value = result).catch(console.error)
+
+  // Listen for server coordination commands
+  onWebSocketMessage((data) => {
+    switch (data.type) {
+      case 'play_command':
+        // Server tells us to play a specific track
+        if (data.uri) {
+          spotifyPlayer.playTrack(data.uri)
+          icon.value = true
+        }
+        break;
+      
+      case 'pause_command':
+        // Server tells us to pause
+        spotifyPlayer.pauseTrack()
+        icon.value = false
+        break;
+      
+      case 'sync_state':
+        // Initial state sync from server
+        icon.value = data.isPlaying
+        if (data.currentSong && data.isPlaying) {
+          spotifyPlayer.playTrack(data.currentSong)
+        }
+        break;
+    }
+  })
 
   function toggle() {
     flipped.value=!flipped.value
-    getPlaybackState(authStore.token || '').then(result => {
-      icon.value = !result
-      result ? pause(authStore.token || '') : play(authStore.token || '')
+    
+    // Send command to server for coordination
+    getPlaybackState().then(result => {
+      const nextState = !result
+      icon.value = nextState
+      
+      // Send playback command to server (which coordinates all clients)
+      if (nextState) {
+        play() // Server will broadcast play command to all clients
+      } else {
+        pause() // Server will broadcast pause command to all clients
+      }
+      
+      // Report our local status back to server
+      sendToServer({
+        type: 'playback_status',
+        isPlaying: nextState,
+        clientId: 'client-' + Math.random().toString(36).substr(2, 9)
+      })
+      
+    }).catch(error => {
+      console.error('Playback control error:', error)
     })
   }
 
