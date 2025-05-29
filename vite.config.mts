@@ -10,6 +10,8 @@ import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import fs from 'node:fs'
+import path from 'node:path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -69,7 +71,12 @@ export default defineConfig({
     ],
   },
   server: {
+    host: '0.0.0.0', // Allow external connections from any IP
     port: 3000,
+    https: {
+      key: fs.readFileSync(path.resolve('localhost-key.pem')),
+      cert: fs.readFileSync(path.resolve('localhost.pem')),
+    },
   },
   css: {
     preprocessorOptions: {

@@ -13,7 +13,7 @@ Set up your project using your preferred package manager. Use the corresponding 
 | [pnpm](https://pnpm.io/installation)                          | `pnpm install` |
 | [bun](https://bun.sh/#getting-started)                        | `bun install`  |
 
-Set up app in spotify (see [Getting started](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)). Set Redirect URI to where the app will run /login (example: http://localhost:3000/login)
+Set up app in spotify (see [Getting started](https://developer.spotify.com/documentation/web-api/tutorials/getting-started)). Set Redirect URI to where the app will run /login (example: https://localhost:3000/login)
 
 Add a .env file and fill in variables (see .env.example)
 
@@ -23,7 +23,7 @@ This section covers how to start the development server and build your project f
 
 ### Starting the Development Server
 
-To start the development server with hot-reload, run the following command. The server will be accessible at [http://localhost:3000](http://localhost:3000)
+To start the development server with hot-reload, run the following command. The server will be accessible at [https://localhost:3000](https://localhost:3000)
 
 ```bash
 yarn dev
