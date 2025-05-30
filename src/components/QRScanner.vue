@@ -11,6 +11,16 @@
         Scan QR Code
       </v-btn>
       
+      <!-- Debug button to test click events -->
+      <v-btn 
+        @click="testClick" 
+        color="secondary" 
+        size="small"
+        class="ml-2"
+      >
+        Test Click
+      </v-btn>
+      
       <div v-if="!canScan" class="error-message">
         <v-icon color="warning">mdi-camera-off</v-icon>
         <p>Camera access required to scan QR codes</p>
@@ -61,13 +71,19 @@ let qrScanner: any = null
 
 // Initialize QR Scanner library
 onMounted(async () => {
+  console.log('QRScanner onMounted called')
   try {
     // Dynamic import to handle module loading
     const QrScannerModule = await import('qr-scanner')
     QrScanner = QrScannerModule.default || QrScannerModule
+    console.log('QrScanner library loaded:', !!QrScanner)
     
     // Check if camera is available
-    canScan.value = await QrScanner.hasCamera()
+    const hasCamera = await QrScanner.hasCamera()
+    console.log('Camera available:', hasCamera)
+    canScan.value = hasCamera
+    console.log('canScan value set to:', canScan.value)
+    
   } catch (error) {
     console.error('Failed to load QR Scanner library:', error)
     scanError.value = 'QR Scanner not available'
