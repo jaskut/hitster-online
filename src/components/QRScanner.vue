@@ -92,18 +92,31 @@ onMounted(async () => {
 
 async function startScanning() {
   console.log('startScanning called')
-  console.log('videoElement:', videoElement.value)
-  console.log('QrScanner loaded:', !!QrScanner)
   
-  if (!videoElement.value || !QrScanner) {
-    console.error('Missing requirements:', { videoElement: !!videoElement.value, QrScanner: !!QrScanner })
+  if (!QrScanner) {
+    console.error('QrScanner not loaded')
     scanError.value = 'QR Scanner not ready'
     return
   }
   
   try {
-    console.log('Starting camera...')
+    console.log('Setting isScanning to true...')
     scanError.value = ''
+    isScanning.value = true
+    
+    // Wait for DOM to update so video element is rendered
+    await nextTick()
+    
+    console.log('After nextTick, videoElement:', videoElement.value)
+    
+    if (!videoElement.value) {
+      console.error('Video element still not available after nextTick')
+      scanError.value = 'Camera element not available'
+      isScanning.value = false
+      return
+    }
+    
+    console.log('Starting camera...')
     
     qrScanner = new QrScanner(
       videoElement.value,
@@ -123,11 +136,11 @@ async function startScanning() {
     console.log('QrScanner created, starting...')
     await qrScanner.start()
     console.log('Camera started successfully')
-    isScanning.value = true
     
   } catch (error) {
     console.error('Scanner error:', error)
     scanError.value = `Failed to start camera: ${error.message}`
+    isScanning.value = false
     emit('scanError', scanError.value)
   }
 }
