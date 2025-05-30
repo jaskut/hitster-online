@@ -13,6 +13,15 @@ import { fileURLToPath, URL } from 'node:url'
 import fs from 'node:fs'
 import path from 'node:path'
 
+// Check if SSL certificates exist
+const keyPath = path.resolve('localhost-key.pem')
+const certPath = path.resolve('localhost.pem')
+const hasSSL = fs.existsSync(keyPath) && fs.existsSync(certPath)
+
+console.log('SSL Certificate Check:')
+console.log('Key file exists:', fs.existsSync(keyPath), keyPath)
+console.log('Cert file exists:', fs.existsSync(certPath), certPath)
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -73,10 +82,12 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Allow external connections from any IP
     port: 3001,
-    https: {
-      key: fs.readFileSync(path.resolve('localhost-key.pem')),
-      cert: fs.readFileSync(path.resolve('localhost.pem')),
-    },
+    ...(hasSSL && {
+      https: {
+        key: fs.readFileSync(keyPath),
+        cert: fs.readFileSync(certPath),
+      },
+    }),
   },
   css: {
     preprocessorOptions: {
