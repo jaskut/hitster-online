@@ -22,7 +22,7 @@
           <p class="text-center mb-3">Ready for the next song?</p>
         </div>
 
-        <qr-scanner 
+        <QRScanner 
           @song-scanned="handleSongScanned" 
           @scan-error="handleScanError"
         />
