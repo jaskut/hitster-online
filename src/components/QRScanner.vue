@@ -45,7 +45,8 @@
 </template>
 
 <script setup lang="ts">
-import QrScanner from 'qr-scanner'
+// Use dynamic import to avoid build issues
+let QrScanner: any = null
 
 const emit = defineEmits<{
   songScanned: [songData: any]
@@ -56,15 +57,28 @@ const isScanning = ref(false)
 const canScan = ref(false)
 const scanError = ref('')
 const videoElement = ref<HTMLVideoElement>()
-let qrScanner: QrScanner | null = null
+let qrScanner: any = null
 
-// Check if camera is available
+// Initialize QR Scanner library
 onMounted(async () => {
-  canScan.value = await QrScanner.hasCamera()
+  try {
+    // Dynamic import to handle module loading
+    const QrScannerModule = await import('qr-scanner')
+    QrScanner = QrScannerModule.default || QrScannerModule
+    
+    // Check if camera is available
+    canScan.value = await QrScanner.hasCamera()
+  } catch (error) {
+    console.error('Failed to load QR Scanner library:', error)
+    scanError.value = 'QR Scanner not available'
+  }
 })
 
 async function startScanning() {
-  if (!videoElement.value) return
+  if (!videoElement.value || !QrScanner) {
+    scanError.value = 'QR Scanner not ready'
+    return
+  }
   
   try {
     scanError.value = ''
