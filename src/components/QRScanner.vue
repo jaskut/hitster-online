@@ -142,6 +142,12 @@ function stopScanning() {
   scanError.value = ''
 }
 
+function testClick() {
+  console.log('TEST CLICK FIRED!')
+  console.log('canScan value:', canScan.value)
+  console.log('isScanning value:', isScanning.value)
+}
+
 async function handleQRResult(qrData: string) {
   try {
     console.log('QR Code scanned:', qrData)
