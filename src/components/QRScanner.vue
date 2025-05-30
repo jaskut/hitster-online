@@ -75,17 +75,24 @@ onMounted(async () => {
 })
 
 async function startScanning() {
+  console.log('startScanning called')
+  console.log('videoElement:', videoElement.value)
+  console.log('QrScanner loaded:', !!QrScanner)
+  
   if (!videoElement.value || !QrScanner) {
+    console.error('Missing requirements:', { videoElement: !!videoElement.value, QrScanner: !!QrScanner })
     scanError.value = 'QR Scanner not ready'
     return
   }
   
   try {
+    console.log('Starting camera...')
     scanError.value = ''
     
     qrScanner = new QrScanner(
       videoElement.value,
       async (result) => {
+        console.log('QR code detected:', result.data)
         await handleQRResult(result.data)
       },
       {
@@ -97,12 +104,14 @@ async function startScanning() {
       }
     )
     
+    console.log('QrScanner created, starting...')
     await qrScanner.start()
+    console.log('Camera started successfully')
     isScanning.value = true
     
   } catch (error) {
     console.error('Scanner error:', error)
-    scanError.value = 'Failed to start camera. Please check permissions.'
+    scanError.value = `Failed to start camera: ${error.message}`
     emit('scanError', scanError.value)
   }
 }
