@@ -35,9 +35,18 @@ export async function play(token:string, uri?:string) {
     },
     body: uri? `{"uris": ["${uri || ''}"]}` : undefined,
   });
+  
   if (response.status == 404 && uri) {
+    console.log('No active Spotify device found, opening in web player')
     let uriArray = uri?.split(':')
     window.open(`https://open.spotify.com/${uriArray[1]}/${uriArray[2]}`)
+    return { success: true, method: 'web_player' }
+  } else if (response.ok) {
+    console.log('Song started playing on Spotify device')
+    return { success: true, method: 'device' }
+  } else {
+    console.error('Playback failed:', response.status, response.statusText)
+    throw new Error(`Playback failed: ${response.status} ${response.statusText}`)
   }
 }
 

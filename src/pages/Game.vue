@@ -31,7 +31,7 @@
       <!-- Error Display -->
       <v-alert 
         v-if="errorMessage" 
-        type="error" 
+        :type="errorMessage.includes('web player') ? 'info' : 'error'"
         closable 
         @click:close="errorMessage = ''"
         class="mt-4"
@@ -79,20 +79,28 @@
       // Play the song immediately
       if (songData.spotify_uri) {
         play(authStore.token || '', songData.spotify_uri)
-          .then(() => {
-            console.log('Song started playing')
+          .then((result) => {
+            console.log('Playback result:', result)
+            if (result?.method === 'web_player') {
+              errorMessage.value = 'Opened in Spotify web player. For best experience, keep Spotify open and playing.'
+            } else {
+              console.log('Song started playing on device')
+            }
+            
             if (songCard.value) {
               songCard.value.icon = true
             }
           })
           .catch(error => {
             console.error('Playback error:', error)
-            errorMessage.value = 'Could not play song. Make sure Spotify is open and playing.'
+            errorMessage.value = 'Could not play song. Make sure you have Spotify Premium and the app is open.'
           })
       }
       
-      // Clear any previous errors
-      errorMessage.value = ''
+      // Clear any previous errors (but not the web player message)
+      if (!errorMessage.value.includes('web player')) {
+        errorMessage.value = ''
+      }
       
     } catch (error) {
       console.error('Error handling scanned song:', error)
