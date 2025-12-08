@@ -46,6 +46,9 @@ Set up your project using your preferred package manager:
    VITE_SPOTIFY_TOKEN_URL=https://accounts.spotify.com/api/token
    ```
 
+### Https Setup
+   Add a `localhost.pem` and `localhost-key.pem` file (for testing a self-signed is sufficient).
+
 ## Usage
 
 ### Starting the Application

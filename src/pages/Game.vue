@@ -7,7 +7,7 @@
 
       <!-- Current Song Display -->
       <div v-if="currentSong" class="song-display">
-        <song-card :song="currentSong" ref="songCard" />
+        <song-card :song="currentSong" :key="currentSong.uri" ref="songCard" />
       </div>
 
       <!-- QR Scanner Section -->
@@ -65,7 +65,7 @@
   import { useAuthStore } from '@/stores/auth'
 
   const authStore = useAuthStore()
-  const currentSong = ref(null)
+  const currentSong = ref()
   const errorMessage = ref('')
   const songCard = ref()
 

@@ -120,12 +120,12 @@ async function startScanning() {
     
     qrScanner = new QrScanner(
       videoElement.value,
-      async (result) => {
+      async (result: any) => {
         console.log('QR code detected:', result.data)
         await handleQRResult(result.data)
       },
       {
-        onDecodeError: (error) => {
+        onDecodeError: (error: any) => {
           console.log('QR decode error:', error)
         },
         highlightScanRegion: true,
@@ -137,7 +137,7 @@ async function startScanning() {
     await qrScanner.start()
     console.log('Camera started successfully')
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Scanner error:', error)
     scanError.value = `Failed to start camera: ${error.message}`
     isScanning.value = false
@@ -194,6 +194,9 @@ async function handleQRResult(qrData: string) {
       if (songData.title && !songData.name) {
         songData.name = songData.title
       }
+      if (songData.spotify_uri && !songData.uri) {
+        songData.uri = songData.spotify_uri
+      }
       
     } catch {
       // Not JSON, try other formats
@@ -214,7 +217,7 @@ async function handleQRResult(qrData: string) {
       stopScanning()
     }
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('QR processing error:', error)
     scanError.value = `Invalid QR code: ${error.message}`
     emit('scanError', scanError.value)

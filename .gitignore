@@ -26,3 +26,5 @@ __screenshots__/
 
 .vercel
 .now
+
+*.pem
